@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useCandidateOnboarding } from '../../hooks/candidate/useCandidateOnboarding';
 import useEmailNotifications from '../../hooks/common/useEmailNotifications';
 import Stepper from '../common/Stepper';
@@ -9,7 +9,88 @@ import Card from '../common/Card';
 import FileUpload from '../common/FileUpload';
 import { User, Briefcase, Upload, Settings, CheckCircle, Lock, Plus, X } from 'lucide-react';
 
+// Currency mapping for countries
+const countryCurrencyMap = {
+  usa: { symbol: '$', code: 'USD' },
+  uk: { symbol: '£', code: 'GBP' },
+  canada: { symbol: 'C$', code: 'CAD' },
+  australia: { symbol: 'A$', code: 'AUD' },
+  germany: { symbol: '€', code: 'EUR' },
+  france: { symbol: '€', code: 'EUR' },
+  spain: { symbol: '€', code: 'EUR' },
+  italy: { symbol: '€', code: 'EUR' },
+  netherlands: { symbol: '€', code: 'EUR' },
+  sweden: { symbol: 'kr', code: 'SEK' },
+  norway: { symbol: 'kr', code: 'NOK' },
+  denmark: { symbol: 'kr', code: 'DKK' },
+  finland: { symbol: '€', code: 'EUR' },
+  ireland: { symbol: '€', code: 'EUR' },
+  switzerland: { symbol: 'CHF', code: 'CHF' },
+  austria: { symbol: '€', code: 'EUR' },
+  belgium: { symbol: '€', code: 'EUR' },
+  portugal: { symbol: '€', code: 'EUR' },
+  greece: { symbol: '€', code: 'EUR' },
+  poland: { symbol: 'zł', code: 'PLN' },
+  czech_republic: { symbol: 'Kč', code: 'CZK' },
+  hungary: { symbol: 'Ft', code: 'HUF' },
+  romania: { symbol: 'lei', code: 'RON' },
+  bulgaria: { symbol: 'лв', code: 'BGN' },
+  croatia: { symbol: '€', code: 'EUR' },
+  slovakia: { symbol: '€', code: 'EUR' },
+  slovenia: { symbol: '€', code: 'EUR' },
+  estonia: { symbol: '€', code: 'EUR' },
+  latvia: { symbol: '€', code: 'EUR' },
+  lithuania: { symbol: '€', code: 'EUR' },
+  india: { symbol: '₹', code: 'INR' },
+  china: { symbol: '¥', code: 'CNY' },
+  japan: { symbol: '¥', code: 'JPY' },
+  south_korea: { symbol: '₩', code: 'KRW' },
+  singapore: { symbol: 'S$', code: 'SGD' },
+  malaysia: { symbol: 'RM', code: 'MYR' },
+  indonesia: { symbol: 'Rp', code: 'IDR' },
+  thailand: { symbol: '฿', code: 'THB' },
+  vietnam: { symbol: '₫', code: 'VND' },
+  philippines: { symbol: '₱', code: 'PHP' },
+  brazil: { symbol: 'R$', code: 'BRL' },
+  mexico: { symbol: '$', code: 'MXN' },
+  argentina: { symbol: '$', code: 'ARS' },
+  chile: { symbol: '$', code: 'CLP' },
+  colombia: { symbol: '$', code: 'COP' },
+  peru: { symbol: 'S/', code: 'PEN' },
+  south_africa: { symbol: 'R', code: 'ZAR' },
+  nigeria: { symbol: '₦', code: 'NGN' },
+  egypt: { symbol: 'E£', code: 'EGP' },
+  israel: { symbol: '₪', code: 'ILS' },
+  uae: { symbol: 'د.إ', code: 'AED' },
+  saudi_arabia: { symbol: '﷼', code: 'SAR' },
+  qatar: { symbol: 'ر.ق', code: 'QAR' },
+  new_zealand: { symbol: 'NZ$', code: 'NZD' },
+  other: { symbol: '€', code: 'EUR' }, // Default to Euro
+};
+
 const CandidateOnboarding = () => {
+  // Currency mapping for different countries
+  const countryCurrencyMap = useMemo(() => ({
+    'United States': { symbol: '$', code: 'USD' },
+    'United Kingdom': { symbol: '£', code: 'GBP' },
+    'Germany': { symbol: '€', code: 'EUR' },
+    'France': { symbol: '€', code: 'EUR' },
+    'Spain': { symbol: '€', code: 'EUR' },
+    'Italy': { symbol: '€', code: 'EUR' },
+    'Canada': { symbol: 'C$', code: 'CAD' },
+    'Australia': { symbol: 'A$', code: 'AUD' },
+    'Japan': { symbol: '¥', code: 'JPY' },
+    'China': { symbol: '¥', code: 'CNY' },
+    'India': { symbol: '₹', code: 'INR' },
+    'Brazil': { symbol: 'R$', code: 'BRL' },
+    'South Korea': { symbol: '₩', code: 'KRW' },
+    'Russia': { symbol: '₽', code: 'RUB' },
+    'Mexico': { symbol: 'Mex$', code: 'MXN' },
+    'Switzerland': { symbol: 'CHF', code: 'CHF' },
+    'Sweden': { symbol: 'kr', code: 'SEK' },
+    'Singapore': { symbol: 'S$', code: 'SGD' },
+    'other': { symbol: '€', code: 'EUR' }, // Default to Euro
+  }), []);
   const {
     // State
     currentStep,
@@ -19,7 +100,7 @@ const CandidateOnboarding = () => {
     experienceOptions,
     workTypeOptions,
     availabilityOptions,
-    germanCitiesOptions,
+    countryOptions,
     visaStatusOptions,
     
     // Status
@@ -611,10 +692,10 @@ const CandidateOnboarding = () => {
       <div className="grid md:grid-cols-2 gap-6">
         <Select
           label="Preferred Location"
-          options={germanCitiesOptions}
+          options={countryOptions}
           value={formData.preferredLocation}
           onChange={(value) => handleInputChange('preferredLocation', value)}
-          placeholder="Select a German city"
+          placeholder="Select a country"
         />
         
         {formData.preferredLocation === 'other' && (
@@ -630,7 +711,7 @@ const CandidateOnboarding = () => {
           label="Salary Expectation"
           value={formData.salaryExpectation}
           onChange={(e) => handleInputChange('salaryExpectation', e.target.value)}
-          placeholder="e.g., €60,000 - €80,000"
+          placeholder="e.g., $60,000 - $80,000"
         />
         
         <Select

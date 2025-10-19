@@ -3,7 +3,7 @@ import { Bot, Send, ArrowRight, Sparkles, Building2, Users, CheckCircle, AlertCi
 import { useOpenRouterChat } from '../../hooks/common';
 import { useToast } from '../../hooks/common';
 import Button from '../common/Button';
-import iconmark from '../../assets/logos/iconmark.png';
+import iconmark from '../../assets/logos/iconmark.svg';
 import { chatPrompts } from '../../prompts/chatPrompts';
 
 // Streaming dots component
@@ -646,4 +646,4 @@ Let's start with the basics - could you tell me about your company? What's the n
   );
 };
 
-export default EmployerOnboardingChat; 
+export default EmployerOnboardingChat;

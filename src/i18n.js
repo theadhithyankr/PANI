@@ -3,19 +3,13 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 import translationEN from './locales/en/translation.json';
-import translationDE from './locales/de/translation.json';
 import employerTranslationEN from './locales/en/employer.json';
-import employerTranslationDE from './locales/de/employer.json';
 
 // the translations
 const resources = {
   en: {
     translation: translationEN,
     employer: employerTranslationEN
-  },
-  de: {
-    translation: translationDE,
-    employer: employerTranslationDE
   }
 };
 
@@ -38,4 +32,4 @@ i18n
     defaultNS: 'translation'
   });
 
-export default i18n; 
+export default i18n;

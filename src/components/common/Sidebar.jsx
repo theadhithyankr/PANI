@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LogOut, Settings, User, Home, Mail, CreditCard, HelpCircle, ExternalLink } from 'lucide-react';
-import iconmarkLogo from '../../assets/logos/iconmark.png';
+import iconmarkLogo from '../../assets/logos/iconmark.svg';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { useAuth } from '../../hooks/common/useAuth';

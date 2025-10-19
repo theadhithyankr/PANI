@@ -38,12 +38,16 @@ const useJobsStore = create((set, get) => ({
     ],
     languages: [
       { value: 'all', label: 'All Languages' },
-      { value: 'german', label: 'German' },
       { value: 'english', label: 'English' },
-      { value: 'french', label: 'French' },
-      { value: 'spanish', label: 'Spanish' },
-      { value: 'italian', label: 'Italian' },
-      { value: 'dutch', label: 'Dutch' }
+      { value: 'hindi', label: 'Hindi' },
+      { value: 'tamil', label: 'Tamil' },
+      { value: 'telugu', label: 'Telugu' },
+      { value: 'kannada', label: 'Kannada' },
+      { value: 'malayalam', label: 'Malayalam' },
+      { value: 'bengali', label: 'Bengali' },
+      { value: 'marathi', label: 'Marathi' },
+      { value: 'gujarati', label: 'Gujarati' },
+      { value: 'punjabi', label: 'Punjabi' }
     ]
   },
   filterOptionsLoading: false,
@@ -667,4 +671,4 @@ const useJobsStore = create((set, get) => ({
   }
 }));
 
-export default useJobsStore; 
+export default useJobsStore;

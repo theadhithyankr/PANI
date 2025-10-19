@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '../../clients/supabaseClient';
 import useGlobalStore from '../../stores/globalStore';
 import { useJobsStore } from '../../stores/jobsStore';
-import { translateToEnglish } from '../../utils/translationUtils';
+import { translateText } from '../../utils/translationUtils';
 
 export const useJobPost = () => {
   const [loading, setLoading] = useState(false);
@@ -77,8 +77,8 @@ export const useJobPost = () => {
       let translatedSkills = jobData.skills_required;
       let translatedLocation = jobData.location;
       if (jobData.preferred_language === 'german') {
-        translatedSkills = await translateToEnglish(jobData.skills_required);
-        translatedLocation = await translateToEnglish(jobData.location);
+        translatedSkills = await translateText(jobData.skills_required);
+        translatedLocation = await translateText(jobData.location);
       }
 
       // Format the salary range data
@@ -152,8 +152,8 @@ export const useJobPost = () => {
       let translatedSkills = jobData.skills_required;
       let translatedLocation = jobData.location;
       if (jobData.preferred_language === 'german') {
-        translatedSkills = await translateToEnglish(jobData.skills_required);
-        translatedLocation = await translateToEnglish(jobData.location);
+        translatedSkills = await translateText(jobData.skills_required);
+        translatedLocation = await translateText(jobData.location);
       }
 
       // Format the salary range data
@@ -317,4 +317,4 @@ export const useJobPost = () => {
     deleteJob,
     getJobById
   };
-}; 
+};

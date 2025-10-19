@@ -25,7 +25,7 @@ import JobApplicantsPage from './JobApplicantsPage';
 import EmployerSettingsPage from './EmployerSettingsPage';
 import EmployerMessagesPage from './MessagesPage';
 import JobForm from '../../components/employer/JobForm';
-import iconmarkLogo from '../../assets/logos/iconmark.png';
+import iconmarkLogo from '../../assets/logos/iconmark.svg';
 import Sidebar from '../../components/common/Sidebar';
 import Header from '../../components/common/Header';
 

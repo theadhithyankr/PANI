@@ -6,8 +6,8 @@ import { useAuth, useOpenRouterChat } from '../../hooks/common';
 import Button from '../common/Button';
 import Header from '../common/Header';
 import useChatStore from '../../store/useChatStore';
-import logo from '../../assets/logos/logo.png';
-import iconmark from '../../assets/logos/iconmark.png';
+import logo from '../../assets/logos/logo.svg';
+import iconmark from '../../assets/logos/iconmark.svg';
 
 // Streaming dots component
 const StreamingDots = () => {

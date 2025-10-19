@@ -11,7 +11,7 @@ import { useJobsStore } from '../../stores/jobsStore';
 import { useToast } from '../../hooks/common/useToast';
 import { useEmailNotifications } from '../../hooks/common';
 import { useAuth } from '../../hooks/common/useAuth';
-import iconmark from '../../assets/logos/iconmark.png';
+import iconmark from '../../assets/logos/iconmark.svg';
 
 // Streaming dots component
 const StreamingDots = () => {
@@ -1310,4 +1310,4 @@ export default function CreateJobPage() {
       )}
     </div>
   );
-} 
+}

@@ -101,8 +101,8 @@ const LoginPage = () => {
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center justify-center mb-6">
             <img 
-              src="https://xxluivbatngexikkjqbo.supabase.co/storage/v1/object/public/assets/logos/Logo%20Color.png" 
-              alt="Velai" 
+              src="/src/assets/logos/logo-type.svg" 
+              alt="Pani" 
               className="h-10 w-auto"
             />
           </Link>
