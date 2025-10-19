@@ -1,0 +1,428 @@
+{
+    "nav": {
+        "login": "Login",
+        "getStarted": "Get Started",
+        "settings": "Settings",
+        "homepage": "Homepage",
+        "contactUs": "Contact us",
+        "signOut": "Sign out"
+    },
+    "common": {
+        "employer": "Employer",
+        "candidate": "Candidate",
+        "emailAddress": "Email address",
+        "enterEmail": "Enter your email",
+        "password": "Password",
+        "signIn": "Sign in",
+        "signUp": "Sign up",
+        "iAmA": "I am a"
+    },
+    "loginPage": {
+        "emailRequired": "Email is required",
+        "invalidEmail": "Please enter a valid email address",
+        "passwordRequired": "Password is required",
+        "passwordTooShort": "Password must be at least 8 characters",
+        "welcomeBackSuccess": "Welcome back! Signing you in...",
+        "welcomeBack": "Welcome back",
+        "signInToAccount": "Sign in to your account",
+        "enterPassword": "Enter your password",
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot password?",
+        "noAccount": "Don't have an account?"
+    },
+    "signupPage": {
+        "emailRequired": "Email is required",
+        "invalidEmail": "Please enter a valid email address",
+        "passwordRequired": "Password is required",
+        "passwordTooShort": "Password must be at least 8 characters",
+        "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "contactNameRequired": "Contact name is required",
+        "fullNameRequired": "Full name is required",
+        "nameTooShort": "Name must be at least 2 characters long",
+        "companyNameRequired": "Company name is required",
+        "companyNameTooShort": "Company name must be at least 2 characters long",
+        "termsRequired": "You must agree to the terms and conditions",
+        "signupSuccess": "Account created successfully! Welcome to Velai!",
+        "createAccount": "Create your account",
+        "startJourney": "Start your recruitment journey today",
+        "contactName": "Contact Name",
+        "fullName": "Full Name",
+        "yourFullName": "Your full name",
+        "enterFullName": "Enter your full name",
+        "companyName": "Company Name",
+        "enterCompanyName": "Enter your company name",
+        "createPassword": "Create a password",
+        "passwordHint": "Must be at least 8 characters long",
+        "confirmPassword": "Confirm Password",
+        "reEnterPassword": "Re-enter your password",
+        "createAccountButton": "Create Account",
+        "alreadyHaveAccount": "Already have an account?",
+        "passwordStrength": {
+            "title": "Password Strength",
+            "suggestions": "Suggestions:",
+            "feedback_length": "at least 8 characters",
+            "feedback_lowercase": "a lowercase letter",
+            "feedback_uppercase": "an uppercase letter",
+            "feedback_number": "a number",
+            "veryWeak": "Very Weak",
+            "weak": "Weak",
+            "fair": "Fair",
+            "good": "Good",
+            "strong": "Strong",
+            "veryStrong": "Very Strong"
+        },
+        "termsAndConditions": {
+            "agreeTo": "I agree to the",
+            "termsOfService": "Terms of Service",
+            "privacyPolicy": "Privacy Policy",
+            "and": "and"
+        },
+        "passwordMatch": "Passwords match"
+    },
+    "awaitingConfirmationPage": {
+        "yourEmailAddress": "your email address",
+        "title": "Check your email",
+        "messageLine1": "We've sent a confirmation link to:",
+        "messageLine2": "Please click the link in the email to activate your account.",
+        "didNotReceiveEmail": "Didn't receive the email?",
+        "resendLink": "Resend confirmation link",
+        "backToLogin": "Back to Login"
+    },
+    "emailVerifiedPage": {
+        "title": "Email Verified!",
+        "message": "Your account has been successfully activated. You can now proceed to log in.",
+        "continueToDashboard": "Continue to Dashboard",
+        "continueToLogin": "Continue to Login"
+    },
+    "forgotPasswordPage": {
+        "emailRequired": "Please enter your email address",
+        "emailSentSuccess": "Password reset email sent! Check your inbox.",
+        "unexpectedError": "An unexpected error occurred",
+        "checkYourEmail": "Check Your Email",
+        "resetLinkSent": "We've sent a password reset link to",
+        "didNotReceive": "Didn't receive the email? Check your spam folder or try again.",
+        "tryDifferentEmail": "Try Different Email",
+        "backToLogin": "Back to Login",
+        "forgotPasswordTitle": "Forgot Password?",
+        "enterEmailInstruction": "Enter your email address and we'll send you a link to reset your password.",
+        "emailAddressLabel": "Email Address",
+        "enterEmailPlaceholder": "Enter your email address",
+        "sending": "Sending...",
+        "sendResetLink": "Send Reset Link"
+    },
+    "resetPasswordPage": {
+        "invalidLink": "Invalid or expired reset link",
+        "linkExpired": "Email link is invalid or has expired. Please request a new password reset link.",
+        "verifyingLink": "Verifying reset link...",
+        "fillAllFields": "Please fill in all fields",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "passwordTooShort": "Password must be at least 6 characters long",
+        "passwordUpdatedSuccess": "Password updated successfully!",
+        "unexpectedError": "An unexpected error occurred",
+        "passwordResetSuccessTitle": "Password Reset Successful!",
+        "passwordResetSuccessMessage": "Your password has been updated successfully. You will be redirected to the login page shortly.",
+        "goToLogin": "Go to Login",
+        "resetPasswordTitle": "Reset Password",
+        "enterNewPasswordInstruction": "Enter your new password below",
+        "newPasswordLabel": "New Password",
+        "enterNewPasswordPlaceholder": "Enter your new password",
+        "passwordStrength": "Password strength:",
+        "strength": {
+            "weak": "weak",
+            "fair": "fair",
+            "good": "good",
+            "strong": "strong"
+        },
+        "confirmNewPasswordLabel": "Confirm New Password",
+        "confirmNewPasswordPlaceholder": "Confirm your new password",
+        "updatingPassword": "Updating Password...",
+        "updatePassword": "Update Password",
+        "rememberPassword": "Remember your password?",
+        "signIn": "Sign in"
+    },
+    "chatHistoryPage": {
+        "title": "Chat History",
+        "subtitle": "Your conversations with Velai Buddy",
+        "newChat": "New Chat",
+        "searchPlaceholder": "Search chats...",
+        "filters": {
+            "all": "All Chats",
+            "job_posting": "Job Posting",
+            "screening": "Candidate Screening",
+            "interviews": "Interviews",
+            "compensation": "Compensation",
+            "strategy": "Hiring Strategy",
+            "candidate_analysis": "Candidate Analysis"
+        },
+        "loading": "Loading chats...",
+        "error": "Error loading chats.",
+        "pinned": "Pinned Chats",
+        "recent": "Recent Chats",
+        "untitled": "Untitled Chat",
+        "messages_one": "{{count}} message",
+        "messages_other": "{{count}} messages",
+        "timestamps": {
+            "justNow": "Just now",
+            "hoursAgo_one": "{{count}} hour ago",
+            "hoursAgo_other": "{{count}} hours ago",
+            "yesterday": "Yesterday",
+            "daysAgo_one": "{{count}} day ago",
+            "daysAgo_other": "{{count}} days ago"
+        },
+        "tooltips": {
+            "pin": "Pin chat",
+            "unpin": "Unpin chat",
+            "delete": "Delete chat"
+        },
+        "deleteConfirm": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
+        "emptyState": {
+            "title": "No chats found",
+            "messageFilter": "Try adjusting your search or filter criteria.",
+            "messageDefault": "Start a conversation with Velai Buddy to see your chat history here.",
+            "button": "Start Your First Chat"
+        }
+    },
+    "chatInterface": {
+        "thinking": "thinking",
+        "newChat": "New Chat",
+        "allChats": "All Chats",
+        "editTitle": "Edit chat name",
+        "pinChat": "Pin chat",
+        "unpinChat": "Unpin chat",
+        "deleteChat": "Delete chat",
+        "deleteConfirm": "Are you sure you want to delete this chat? This action cannot be undone.",
+        "aiAssistant": {
+            "jobSeeker": "AI Assistant for Job Seekers",
+            "employer": "AI Assistant for Employers"
+        },
+        "tooltips": {
+            "regenerate": "Regenerate response",
+            "goodResponse": "Good response",
+            "poorResponse": "Poor response",
+            "info": "Message info"
+        },
+        "info": {
+            "model": "Model: {{modelName}}",
+            "generated": "Generated: {{timestamp}}",
+            "responseId": "Response ID: {{id}}"
+        },
+        "error": {
+            "generic": "I apologize, but I encountered an error: {{message}}. Please try again or check your connection.",
+            "connection": "Connection Error",
+            "dismiss": "Dismiss"
+        },
+        "suggestions": {
+            "createJob": "Create a job description",
+            "findCandidates": "Find qualified candidates",
+            "analyzeResume": "Analyze resume",
+            "generateQuestions": "Generate interview questions",
+            "optimizeProfile": "Optimize my profile",
+            "careerAdvice": "Career advice"
+        },
+        "initialState": {
+            "hiredWith": "Get Hired with",
+            "findTalentWith": "Find Talent with",
+            "subtitleSeeker": "Ask your AI Assistant for Job Seekers anything about job searching, career advice, or interview prep",
+            "subtitleEmployer": "Ask your AI Assistant for Employers anything about hiring, recruiting, or talent acquisition",
+            "promptPlaceholder": "Enter a prompt for text completion"
+        },
+        "input": {
+            "placeholder": "Type your message..."
+        },
+        "disclaimer": "AI can make mistakes. Check important information.",
+        "actions": {
+            "createJob": {
+                "title": "Create Job Posting",
+                "description": "Draft a complete job posting based on our conversation"
+            },
+            "scheduleInterview": {
+                "title": "Schedule Interview",
+                "description": "Set up interviews with qualified candidates"
+            },
+            "draftCommunication": {
+                "title": "Draft Communication",
+                "description": "Create professional letters or emails"
+            },
+            "optimizeResume": {
+                "title": "Optimize Resume",
+                "description": "Improve your resume based on our discussion"
+            },
+            "draftCoverLetter": {
+                "title": "Draft Cover Letter",
+                "description": "Create a tailored cover letter"
+            },
+            "interviewPrep": {
+                "title": "Interview Preparation",
+                "description": "Practice questions and scenarios"
+            }
+        },
+        "actionModal": {
+            "comingSoon": "Coming Soon!",
+            "inDevelopment": "This feature is currently under development."
+        },
+        "fileSize": {
+            "bytes": "Bytes",
+            "kb": "KB",
+            "mb": "MB",
+            "gb": "GB"
+        }
+    }
+  ,
+  "landing": {
+    "brand": "Velai v3",
+    "hero": {
+      "title1": "AI-Powered Recruitment",
+      "title2": "Connecting Talent Globally",
+      "subtitle": "Bridge the gap between German employers and Indian talent with intelligent matching, seamless relocation support, and AI-driven recruitment processes.",
+      "startHiring": "Start Hiring",
+      "findOpportunities": "Find Opportunities"
+    },
+    "features": {
+      "title": "Why Choose Velai v3?",
+      "subtitle": "Our platform combines cutting-edge AI technology with deep cultural understanding to create perfect matches between employers and candidates.",
+      "aiMatching": {
+        "title": "AI-Powered Matching",
+        "desc": "Advanced algorithms match candidates based on skills, culture fit, and career aspirations."
+      },
+      "globalRelocation": {
+        "title": "Global Relocation",
+        "desc": "Comprehensive support for visa processing, housing, and cultural integration."
+      },
+      "culturalBridge": {
+        "title": "Cultural Bridge",
+        "desc": "Deep understanding of both German and Indian work cultures for seamless integration."
+      },
+      "endToEnd": {
+        "title": "End-to-End Process",
+        "desc": "From initial screening to successful placement, we handle every step of the journey."
+      }
+    },
+    "cta": {
+      "title": "Ready to Transform Your Recruitment?",
+      "subtitle": "Join thousands of employers and candidates who trust Velai v3 for their career journey.",
+      "button": "Get Started Today"
+    },
+    "footer": {
+      "brandDesc": "Connecting German employers with Indian talent through AI-powered recruitment.",
+      "employers": "For Employers",
+      "candidates": "For Candidates",
+      "support": "Support",
+      "links": {
+        "postJobs": "Post Jobs",
+        "findTalent": "Find Talent",
+        "pricing": "Pricing",
+        "browseJobs": "Browse Jobs",
+        "careerAdvice": "Career Advice",
+        "relocationGuide": "Relocation Guide",
+        "helpCenter": "Help Center",
+        "contactUs": "Contact Us",
+        "privacyPolicy": "Privacy Policy"
+      },
+      "copyright": "All rights reserved."
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "completeProfile": "Complete your profile"
+  },
+  "applicationDetails": {
+    "errors": {
+      "loadingTitle": "Error Loading Application",
+      "notFoundTitle": "Application Not Found",
+      "notFoundMessage": "The application you're looking for doesn't exist or you don't have permission to view it.",
+      "tryAgain": "Try Again",
+      "backToApplications": "Back to Applications",
+      "refresh": "Refresh",
+      "failedToInitializeMessaging": "Failed to initialize messaging. Please try again.",
+      "failedToSendMessage": "Failed to send message. Please try again.",
+      "messageSent": "Message sent successfully",
+      "failedToDownload": "Failed to download document. Please try again.",
+      "applicationWithdrawn": "Application withdrawn successfully"
+    },
+    "status": {
+      "applied": "Application Submitted",
+      "reviewing": "Under Review",
+      "interview_scheduled": "Interview Scheduled",
+      "offer_received": "Offer Received",
+      "rejected": "Not Selected",
+      "withdrawn": "Withdrawn"
+    },
+    "pipeline": {
+      "applied": { "title": "Applied", "subtitle": "Submitted" },
+      "reviewing": { "title": "Review", "subtitle": "In Progress" },
+      "interviewing": { "title": "Interview", "subtitle": "Scheduled" },
+      "offer": { "title": "Offer", "subtitle": "Decision" },
+      "hired": { "title": "Hired", "subtitle": "Success" }
+    },
+    "tabs": {
+      "overview": "Overview",
+      "timeline": "Timeline",
+      "documents": "Documents",
+      "details": "Application Details",
+      "messages": "Messages"
+    },
+    "timeline": {
+      "applicationSubmitted": {
+        "title": "Application Submitted",
+        "desc": "Your application has been successfully submitted"
+      },
+      "underReview": {
+        "title": "Under Review",
+        "desc": "Your application is being reviewed by the hiring team"
+      },
+      "interviewScheduled": {
+        "title": "Interview Scheduled",
+        "desc": "Interview has been scheduled with the hiring team"
+      },
+      "offerReceived": {
+        "title": "Offer Received",
+        "desc": "Congratulations! You have received a job offer"
+      }
+    },
+    "directInterview": {
+      "appliedVia": "Direct Invitation",
+      "timeline": "Interview scheduled",
+      "platform": {
+        "video": "Video Call",
+        "phone": "Phone Call",
+        "inPerson": "In Person"
+      },
+      "instructions": "Please prepare for the interview and have your portfolio ready.",
+      "interviewerTitle": "Hiring Manager",
+      "interviewerBio": "Experienced hiring professional."
+    },
+    "documents": {
+      "loading": "Loading documents...",
+      "none": "No documents found for this application.",
+      "verified": "Verified",
+      "submitted": "Submitted",
+      "coverNote": "Cover Note",
+      "text": "Text",
+      "addedOn": "Added {{date}}"
+    },
+    "jobInfo": {
+      "title": "Job Information",
+      "jobTitle": "Job Title",
+      "company": "Company",
+      "location": "Location",
+      "remote": "Remote",
+      "jobType": "Job Type",
+      "salaryRange": "Salary Range",
+      "experienceLevel": "Experience Level",
+      "requiredSkills": "Required Skills",
+      "jobDescription": "Job Description",
+      "requirements": "Requirements",
+      "responsibilities": "Responsibilities",
+      "additionalQuestions": "Additional Questions",
+      "appliedOn": "Applied {{date}}",
+      "id": "ID: {{id}}"
+    }
+  },
+  "commonUi": {
+    "loading": "Loading...",
+    "user": "User"
+  }
+} 
