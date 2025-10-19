@@ -1,8 +1,143 @@
-# 🎉 Message Email Notifications System - Complete Implementation Guide
+# Pani - AI-Powered Recruitment Platform
 
-## 📋 Overview
+Pani is a modern, AI-powered recruitment platform that connects employers with talented candidates. Built with React, Vite, and Supabase.
 
-We've implemented a comprehensive email notification system that automatically sends emails to candidates and employers whenever they receive messages in the Velai platform. This system ensures that important conversations don't get missed and keeps both parties engaged in the hiring process.
+## 🚀 Features
+
+- **AI-Powered Matching**: Intelligent job-candidate matching using advanced algorithms
+- **Real-time Messaging**: Built-in communication system between employers and candidates
+- **Interview Management**: Comprehensive interview scheduling and management
+- **Document Management**: Secure document upload and management system
+- **Multi-language Support**: Support for multiple languages with i18n
+- **Modern UI/UX**: Beautiful, responsive design with Tailwind CSS
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18, Vite, Tailwind CSS
+- **Backend**: Supabase (Database, Auth, Storage, Edge Functions)
+- **AI Integration**: OpenRouter API for AI-powered features
+- **Email**: Resend API for email notifications
+- **State Management**: Zustand
+- **Routing**: React Router DOM
+- **Internationalization**: i18next
+
+## 📋 Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+- Supabase account
+- OpenRouter API key (optional, for AI features)
+- Resend API key (optional, for email notifications)
+
+## 🔧 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd pani-recruitment-platform
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   
+   Copy the `.env` file and update with your actual credentials:
+   ```env
+   # Supabase Configuration
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   
+   # OpenRouter API Configuration (optional)
+   VITE_OPENROUTER_API_KEY=your_openrouter_api_key
+   
+   # Resend API Configuration (optional)
+   VITE_RESEND_API_KEY=your_resend_api_key
+   ```
+
+4. **Set up Supabase Database**
+   
+   Run the migration files in your Supabase SQL editor:
+   - Navigate to the `database/migrations` folder
+   - Execute the SQL files in your Supabase dashboard
+
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+## 🗄️ Database Setup
+
+The platform uses Supabase as the backend. You'll need to:
+
+1. Create a new Supabase project
+2. Run the database migrations from the `database/migrations` folder
+3. Set up Row Level Security (RLS) policies
+4. Configure authentication settings
+5. Set up storage buckets for file uploads
+
+## 🔑 Environment Configuration
+
+### Required Variables
+- `VITE_SUPABASE_URL`: Your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous key
+
+### Optional Variables
+- `VITE_OPENROUTER_API_KEY`: For AI-powered features
+- `VITE_RESEND_API_KEY`: For email notifications
+
+## 🚀 Deployment
+
+1. **Build the project**
+   ```bash
+   npm run build
+   ```
+
+2. **Deploy to your preferred hosting service**
+   - Vercel
+   - Netlify
+   - AWS S3 + CloudFront
+   - Or any static hosting service
+
+## 📁 Project Structure
+
+```
+src/
+├── agents/          # AI agent configurations
+├── assets/          # Static assets (images, icons)
+├── clients/         # API clients (Supabase, etc.)
+├── components/      # Reusable React components
+├── contexts/        # React contexts
+├── data/           # Static data and configurations
+├── hooks/          # Custom React hooks
+├── locales/        # Internationalization files
+├── pages/          # Page components
+├── prompts/        # AI prompts and templates
+├── services/       # Business logic services
+├── stores/         # Zustand state stores
+├── utils/          # Utility functions
+└── theme.js        # Theme configuration
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+For support and questions:
+- Create an issue in the GitHub repository
+- Contact the development team
 
 ## ✅ What We Implemented
 
