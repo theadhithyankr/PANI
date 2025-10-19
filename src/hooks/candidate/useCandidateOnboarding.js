@@ -314,7 +314,6 @@ export const useCandidateOnboarding = () => {
         user.id,
         documentType,
         {
-          onboarding_step: 3,
           document_category: 'candidate_profile',
         }
       );
@@ -384,8 +383,6 @@ export const useCandidateOnboarding = () => {
         },
         relocation_timeline: formData.availability,
         visa_status: formData.visaStatus,
-        onboarding_completed: true,
-        onboarding_step: 4,
         ai_match_data: {
           enabled: true,
           job_match_threshold: 80,

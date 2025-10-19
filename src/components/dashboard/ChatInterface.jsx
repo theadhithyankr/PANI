@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Send, Paperclip, FileText, Image, File, X, Bot, User, Briefcase, Users, FileBarChart, MessageSquare, MoreVertical, Edit3, Pin, Trash2, Check, AlertCircle, RotateCcw, ThumbsUp, ThumbsDown, Info, PlusCircle, Calendar, FileEdit, Zap, Globe } from 'lucide-react';
-import { useAuth, useOpenRouterChat } from '../../hooks/common';
+import { useAuth, useGroqChat } from '../../hooks/common';
 import Button from '../common/Button';
 import Header from '../common/Header';
 import useChatStore from '../../store/useChatStore';
@@ -30,7 +30,7 @@ const StreamingDots = () => {
 
 const ChatInterface = ({ currentChatTitle = null, showHeader = true }) => {
   const { user } = useAuth();
-  const { sendMessageStream, isLoading: aiLoading, error: aiError, clearError } = useOpenRouterChat();
+  const { sendMessageStream, isLoading: aiLoading, error: aiError, clearError } = useGroqChat();
   const location = useLocation();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();

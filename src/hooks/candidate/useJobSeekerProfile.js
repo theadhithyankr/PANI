@@ -37,8 +37,7 @@ export const useJobSeekerProfile = (userId) => {
       growth_areas: [],
       industry_trends: []
     },
-    onboarding_completed: false,
-    onboarding_step: 1
+
   };
 
   // Add state for basic profile
@@ -462,4 +461,4 @@ export const useJobSeekerProfile = (userId) => {
   };
 };
 
-export default useJobSeekerProfile; 
+export default useJobSeekerProfile;

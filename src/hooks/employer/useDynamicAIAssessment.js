@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
-import useOpenRouterChat from '../common/useOpenRouterChat';
+import useGroqChat from '../common/useGroqChat';
 
 const useDynamicAIAssessment = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { sendMessage } = useOpenRouterChat();
+  const { sendMessage } = useGroqChat();
 
   const generateAssessment = useCallback(async (candidate, onComplete, language = 'en', jobInfo = null) => {
     if (!candidate) return;
@@ -122,4 +122,4 @@ const useDynamicAIAssessment = () => {
   return { isLoading, error, generateAssessment };
 };
 
-export default useDynamicAIAssessment; 
+export default useDynamicAIAssessment;

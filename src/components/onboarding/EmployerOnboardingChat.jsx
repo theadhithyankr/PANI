@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Bot, Send, ArrowRight, Sparkles, Building2, Users, CheckCircle, AlertCircle, MapPin } from 'lucide-react';
-import { useOpenRouterChat } from '../../hooks/common';
+import { useGroqChat } from '../../hooks/common';
 import { useToast } from '../../hooks/common';
 import Button from '../common/Button';
 import iconmark from '../../assets/logos/iconmark.svg';
@@ -26,7 +26,7 @@ const StreamingDots = () => {
 
 // Custom hook for employer onboarding chat with data extraction
 const useEmployerOnboardingChat = () => {
-  const { sendMessageStream, isLoading, error, clearError } = useOpenRouterChat();
+  const { sendMessageStream, isLoading, error, clearError } = useGroqChat();
   const [extractedData, setExtractedData] = useState({});
   const [dataExtractionComplete, setDataExtractionComplete] = useState(false);
   const [isExtractingData, setIsExtractingData] = useState(false);
@@ -40,10 +40,10 @@ const useEmployerOnboardingChat = () => {
     
     try {
       // Create a temporary hook instance with custom system prompt
-      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       
       if (!apiKey) {
-        throw new Error('OpenRouter API key not found. Please set VITE_OPENROUTER_API_KEY in your environment variables.');
+        throw new Error('Groq API key not found. Please set VITE_GROQ_API_KEY in your environment variables.');
       }
 
       // Prepare messages array with custom system prompt
@@ -60,7 +60,7 @@ const useEmployerOnboardingChat = () => {
 
       // Prepare request payload
       const payload = {
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'llama-3.3-70b-versatile',
         messages: apiMessages,
         max_tokens: 4000,
         temperature: 0.7,
@@ -68,13 +68,11 @@ const useEmployerOnboardingChat = () => {
       };
 
       // Make API request
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': window.location.origin,
-          'X-Title': 'Velai Platform'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });

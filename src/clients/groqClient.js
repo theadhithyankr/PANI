@@ -26,7 +26,7 @@ class GroqClient {
     }
 
     const {
-      model = 'llama-3.1-70b-versatile', // Default to Llama 3.1 70B
+      model = 'llama-3.3-70b-versatile', // Default to Llama 3.3 70B
       maxTokens = 4000,
       temperature = 0.7,
       stream = false,
@@ -134,7 +134,7 @@ class GroqClient {
    */
   getAvailableModels() {
     return [
-      'llama-3.1-70b-versatile',
+      'llama-3.3-70b-versatile',
       'llama-3.1-8b-instant',
       'mixtral-8x7b-32768',
       'gemma-7b-it',

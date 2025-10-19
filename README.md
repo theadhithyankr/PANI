@@ -15,7 +15,7 @@ Pani is a modern, AI-powered recruitment platform that connects employers with t
 
 - **Frontend**: React 18, Vite, Tailwind CSS
 - **Backend**: Supabase (Database, Auth, Storage, Edge Functions)
-- **AI Integration**: OpenRouter API for AI-powered features
+- **AI Integration**: Groq API for AI-powered features
 - **Email**: Resend API for email notifications
 - **State Management**: Zustand
 - **Routing**: React Router DOM
@@ -26,7 +26,7 @@ Pani is a modern, AI-powered recruitment platform that connects employers with t
 - Node.js (v18 or higher)
 - npm or yarn
 - Supabase account
-- OpenRouter API key (optional, for AI features)
+- Groq API key (optional, for AI features)
 - Resend API key (optional, for email notifications)
 
 ## 🔧 Installation
@@ -50,8 +50,8 @@ Pani is a modern, AI-powered recruitment platform that connects employers with t
    VITE_SUPABASE_URL=your_supabase_project_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    
-   # OpenRouter API Configuration (optional)
-   VITE_OPENROUTER_API_KEY=your_openrouter_api_key
+   # Groq API Configuration (optional)
+   VITE_GROQ_API_KEY=your_groq_api_key
    
    # Resend API Configuration (optional)
    VITE_RESEND_API_KEY=your_resend_api_key
@@ -85,7 +85,7 @@ The platform uses Supabase as the backend. You'll need to:
 - `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous key
 
 ### Optional Variables
-- `VITE_OPENROUTER_API_KEY`: For AI-powered features
+- `VITE_GROQ_API_KEY`: For AI-powered features
 - `VITE_RESEND_API_KEY`: For email notifications
 
 ## 🚀 Deployment

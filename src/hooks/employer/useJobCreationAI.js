@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAuth } from '../common/useAuth';
 import { chatPrompts } from '../../prompts/chatPrompts';
 
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 // Job creation AI system prompt
 const JOB_CREATION_SYSTEM_PROMPT = chatPrompts.jobCreation;
@@ -116,10 +116,10 @@ const useJobCreationAI = () => {
 
     try {
       // Get API key from environment
-      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       
       if (!apiKey) {
-        throw new Error('OpenRouter API key not found. Please set VITE_OPENROUTER_API_KEY in your environment variables.');
+        throw new Error('Groq API key not found. Please set VITE_GROQ_API_KEY in your environment variables.');
       }
 
       // Add user message to conversation
@@ -149,34 +149,26 @@ const useJobCreationAI = () => {
 
       // Prepare request payload with structured outputs
       const payload = {
-        model: 'openai/gpt-4o', // Using GPT-4o for structured outputs support
+        model: 'llama-3.3-70b-versatile', // Using Llama model for Groq
         messages: apiMessages,
         max_tokens: 4000,
         temperature: 0.7,
         stream: streaming
       };
 
-      // Only add structured output for non-streaming requests
-      // Streaming + structured outputs may not work well together
+      // Note: Groq may not support structured outputs like OpenRouter
+      // For now, we'll rely on the system prompt to guide the response format
       if (!streaming) {
-        payload.response_format = {
-          type: 'json_schema',
-          json_schema: {
-            name: 'job_creation_response',
-            strict: false,
-            schema: JOB_DATA_SCHEMA
-          }
-        };
+        // Remove structured output for Groq compatibility
+        // The system prompt should guide the AI to return JSON format
       }
 
       // Make API request
-      const response = await fetch(OPENROUTER_API_URL, {
+      const response = await fetch(GROQ_API_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': window.location.origin,
-          'X-Title': 'Velai Platform'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });
@@ -372,4 +364,4 @@ const useJobCreationAI = () => {
   };
 };
 
-export default useJobCreationAI; 
+export default useJobCreationAI;

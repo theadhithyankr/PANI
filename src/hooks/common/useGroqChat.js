@@ -1,13 +1,14 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { chatPrompts } from '../../prompts/chatPrompts';
+import { groqClient } from '../../clients/groqClient';
 
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 // System prompts for different user types and languages
 const SYSTEM_PROMPTS = chatPrompts.general;
 
-const useOpenRouterChat = () => {
+const useGroqChat = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -86,10 +87,10 @@ const useOpenRouterChat = () => {
 
     try {
       // Get API key from environment
-      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       
       if (!apiKey) {
-        throw new Error('OpenRouter API key not found. Please set VITE_OPENROUTER_API_KEY in your environment variables.');
+        throw new Error('Groq API key not found. Please set VITE_GROQ_API_KEY in your environment variables.');
       }
 
       // Process files if any
@@ -146,33 +147,21 @@ const useOpenRouterChat = () => {
       // Helper to attempt a request with specific PDF engine
       const attemptRequest = async (pdfEngine = null) => {
         const payload = {
-          model: 'anthropic/claude-3.5-sonnet',
+          model: 'llama-3.3-70b-versatile',
           messages: apiMessages,
           max_tokens: 4000,
           temperature: 0.7,
           stream: streaming
         };
 
-        const hasPDFs = files.some(file => file.type === 'application/pdf');
-        if (hasPDFs) {
-          const engine = pdfEngine || 'mistral-ocr';
-          payload.plugins = [
-            {
-              id: 'file-parser',
-              pdf: {
-                engine
-              }
-            }
-          ];
-        }
+        // Note: Groq doesn't support PDF plugins like OpenRouter
+        // Files will need to be processed differently or converted to text first
 
-        const resp = await fetch(OPENROUTER_API_URL, {
+        const resp = await fetch(GROQ_API_URL, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'Velai Platform'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(payload)
         });
@@ -194,21 +183,16 @@ const useOpenRouterChat = () => {
         return resp;
       };
 
-      // Try with OCR first, then fallback to text engine if needed
-      const hasPDFs = files.some(file => file.type === 'application/pdf');
+      // Try with basic request (Groq doesn't support PDF engines)
       let response;
       try {
-        response = await attemptRequest('mistral-ocr');
+        response = await attemptRequest();
       } catch (firstErr) {
+        // For PDFs, provide a helpful error message
+        const hasPDFs = files.some(file => file.type === 'application/pdf');
         if (hasPDFs) {
-          // Fallback to pdf-text engine
-          try {
-            response = await attemptRequest('pdf-text');
-          } catch (secondErr) {
-            // Provide a clearer error for scanned PDFs failing OCR and text parsing
-            const message = `We couldn't extract text from your PDF. It may be a low-quality scan. Please try a clearer scan or upload page images (PNG/JPG). Details: ${secondErr.message || 'Unknown error'}`;
-            throw new Error(message);
-          }
+          const message = `PDF files are not directly supported with Groq API. Please convert your PDF to text or upload as images (PNG/JPG). Details: ${firstErr.message || 'Unknown error'}`;
+          throw new Error(message);
         } else {
           throw firstErr;
         }
@@ -310,4 +294,4 @@ const useOpenRouterChat = () => {
   };
 };
 
-export default useOpenRouterChat;
+export default useGroqChat;

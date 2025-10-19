@@ -1,5 +1,6 @@
 import { supabase } from '../clients/supabaseClient';
 import { computeUnifiedMatchScore } from '../utils/unifiedMatchScore';
+import { groqClient } from '../clients/groqClient';
 
 /**
  * Employer AI Agent - AI-powered candidate matching and job creation for employers
@@ -16,7 +17,11 @@ class EmployerAIAgent {
   constructor() {
     this.cache = new Map();
     this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
-    this.aiApiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+    this.groqClient = groqClient;
+    
+    if (!this.groqClient.isConfigured()) {
+      console.warn('Groq API key not found. AI features will be disabled.');
+    }
   }
 
   /**
@@ -212,7 +217,7 @@ class EmployerAIAgent {
       - Description: ${jobData.data.description?.substring(0, 500)}...
       `;
 
-      const response = await this.callOpenRouterAI([
+      const response = await this.callGroqAI([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: context }
       ]);
@@ -262,7 +267,7 @@ class EmployerAIAgent {
       Industry: ${industry || 'Not specified'}
       `;
 
-      const response = await this.callOpenRouterAI([
+      const response = await this.callGroqAI([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: context }
       ]);
@@ -323,7 +328,7 @@ class EmployerAIAgent {
 
       Provide specific, actionable insights for the hiring decision.`;
 
-      const response = await this.callOpenRouterAI([
+      const response = await this.callGroqAI([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: `Please analyze this resume for the ${job.title} position:\n\n${resumeText}` }
       ]);
@@ -406,7 +411,7 @@ class EmployerAIAgent {
       Interview Type: ${interviewType}
       `;
 
-      const response = await this.callOpenRouterAI([
+      const response = await this.callGroqAI([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: context }
       ]);
@@ -501,7 +506,7 @@ class EmployerAIAgent {
    */
   async enhanceCandidatesWithAI(candidates, job, aiPrompt) {
     if (!this.aiApiKey) {
-      console.warn('OpenRouter API key not found, returning basic matches');
+      console.warn('Groq API key not found, returning basic matches');
       return candidates.map(candidate => {
         const percentage = computeUnifiedMatchScore({ candidate, job });
         return {
@@ -578,7 +583,7 @@ class EmployerAIAgent {
     ${aiPrompt ? `Additional Context: ${aiPrompt}` : ''}
     `;
 
-    const response = await this.callOpenRouterAI([
+    const response = await this.callGroqAI([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: context }
     ]);
@@ -591,7 +596,7 @@ class EmployerAIAgent {
    */
   async enhanceJobDataWithAI(jobData, company, aiPrompt) {
     if (!this.aiApiKey) {
-      console.warn('OpenRouter API key not found, returning basic job data');
+      console.warn('Groq API key not found, returning basic job data');
       return jobData;
     }
 
@@ -619,7 +624,7 @@ class EmployerAIAgent {
     ${aiPrompt ? `Additional Requirements: ${aiPrompt}` : ''}
     `;
 
-    const response = await this.callOpenRouterAI([
+    const response = await this.callGroqAI([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: context }
     ]);
@@ -628,33 +633,18 @@ class EmployerAIAgent {
   }
 
   /**
-   * Call OpenRouter AI API
+   * Call Groq AI API
    */
-  async callOpenRouterAI(messages) {
-    if (!this.aiApiKey) {
-      throw new Error('OpenRouter API key not found');
+  async callGroqAI(messages) {
+    if (!this.groqClient.isConfigured()) {
+      throw new Error('Groq API key not found');
     }
 
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${this.aiApiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin,
-        'X-Title': 'VelAI Employer Agent'
-      },
-      body: JSON.stringify({
-        model: 'anthropic/claude-3.5-sonnet',
-        messages: messages,
-        max_tokens: 2000,
-        temperature: 0.7
-      })
+    const response = await this.groqClient.chatCompletion(messages, {
+      model: 'llama-3.3-70b-versatile',
+      maxTokens: 2000,
+      temperature: 0.7
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'AI request failed');
-    }
 
     const data = await response.json();
     return data.choices[0].message;
