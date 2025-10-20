@@ -21,7 +21,13 @@ export const useUserDocuments = (userId) => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setDocuments(data || []);
+
+      const normalized = (data || []).map(doc => ({
+        ...doc,
+        file_name: doc.file_name || doc.metadata?.original_name || (doc.file_path ? doc.file_path.split('/').pop() : ''),
+      }));
+
+      setDocuments(normalized);
     } catch (err) {
       setError(err);
       console.error("Error fetching documents:", err);
@@ -78,4 +84,4 @@ export const useUserDocuments = (userId) => {
   };
 
   return { documents, loading, error, updateDocumentVerification, downloadDocument };
-}; 
+};

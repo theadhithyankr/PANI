@@ -38,34 +38,61 @@ export const useDocumentUpload = () => {
         throw new Error(uploadError.message);
       }
 
-      // Create document record in the database
-      const { data: documentData, error: dbError } = await supabase
+      // Base payload (without file_name) to allow retry if column doesn't exist
+      const basePayload = {
+        owner_id: ownerId,
+        document_type: documentType,
+        file_path: filePath,
+        file_size: file.size,
+        file_type: file.type,
+        metadata: {
+          ...metadata,
+          uploaded_at: new Date().toISOString(),
+          original_name: file.name,
+        },
+      };
+
+      let documentData;
+      let dbError;
+
+      // First attempt: include file_name
+      ({ data: documentData, error: dbError } = await supabase
         .from('documents')
         .insert({
-          owner_id: ownerId,
-          document_type: documentType,
+          ...basePayload,
           file_name: file.name,
-          file_path: filePath,
-          file_size: file.size,
-          file_type: file.type,
-          metadata: {
-            ...metadata,
-            uploaded_at: new Date().toISOString(),
-          },
         })
         .select()
-        .single();
+        .single());
 
-      if (dbError && dbError.code !== 'PGRST116') {
-        // If database insert fails, delete the uploaded file
-        await supabase.storage.from('documents').remove([filePath]);
-        throw new Error(dbError.message);
+      if (dbError) {
+        const msg = dbError.message || '';
+        const isMissingColumn = msg.includes("schema cache") || msg.includes("file_name") || dbError.code === 'PGRST204' || dbError.code === 'PGRST301';
+        if (isMissingColumn) {
+          // Retry without file_name for environments where column isn't present yet
+          const { data: retryData, error: retryErr } = await supabase
+            .from('documents')
+            .insert(basePayload)
+            .select()
+            .single();
+
+          if (retryErr) {
+            // Clean up uploaded file if DB insert fails
+            await supabase.storage.from('documents').remove([filePath]);
+            throw new Error(retryErr.message);
+          }
+
+          documentData = retryData;
+        } else {
+          // Clean up uploaded file if DB insert fails
+          await supabase.storage.from('documents').remove([filePath]);
+          throw new Error(dbError.message);
+        }
       }
 
-      if (!documentData) {
-        // If no document data returned, delete the uploaded file
-        await supabase.storage.from('documents').remove([filePath]);
-        throw new Error('Failed to create document record');
+      // Ensure a display name exists in returned object for UI
+      if (documentData && !documentData.file_name) {
+        documentData.file_name = file.name;
       }
 
       return documentData;
@@ -133,4 +160,4 @@ export const useDocumentUpload = () => {
     uploadError,
     uploadProgress,
   };
-}; 
+};

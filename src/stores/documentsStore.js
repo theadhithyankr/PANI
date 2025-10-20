@@ -47,14 +47,20 @@ const useDocumentsStore = create((set, get) => ({
 
       if (error) throw error;
 
+      // Normalize docs to ensure file_name is present for UI
+      const normalized = (documents || []).map((doc) => ({
+        ...doc,
+        file_name: doc.file_name || doc.metadata?.original_name || (doc.file_path ? doc.file_path.split('/').pop() : ''),
+      }));
+
       set({ 
-        documents: documents || [], 
+        documents: normalized, 
         isLoading: false, 
         isInitialized: true,
         lastOwnerId: ownerId 
       });
 
-      return documents;
+      return normalized;
     } catch (err) {
       console.error('Error fetching documents:', err);
       set({ 
@@ -97,31 +103,60 @@ const useDocumentsStore = create((set, get) => ({
         throw new Error(uploadError.message);
       }
 
-      // Create document record in database
-      const { data: documentData, error: dbError } = await supabase
+      // Base payload without file_name to support environments where column is missing
+      const basePayload = {
+        owner_id: ownerId,
+        document_type: documentType,
+        file_path: filePath,
+        file_size: file.size,
+        file_type: file.type,
+        is_verified: false,
+        metadata: {
+          ...metadata,
+          uploaded_at: new Date().toISOString(),
+          original_name: file.name,
+          content_type: file.type
+        }
+      };
+
+      let documentData;
+      let dbError;
+
+      // Attempt insert with file_name first
+      ({ data: documentData, error: dbError } = await supabase
         .from('documents')
         .insert({
-          owner_id: ownerId,
-          document_type: documentType,
+          ...basePayload,
           file_name: file.name,
-          file_path: filePath,
-          file_size: file.size,
-          file_type: file.type,
-          is_verified: false,
-          metadata: {
-            ...metadata,
-            uploaded_at: new Date().toISOString(),
-            original_name: file.name,
-            content_type: file.type
-          }
         })
         .select()
-        .single();
+        .single());
 
       if (dbError) {
-        // If database insert fails, delete the uploaded file
-        await supabase.storage.from('documents').remove([filePath]);
-        throw new Error(dbError.message);
+        const msg = dbError.message || '';
+        const isMissingColumn = msg.includes('schema cache') || msg.includes('file_name') || dbError.code === 'PGRST204' || dbError.code === 'PGRST301';
+        if (isMissingColumn) {
+          // Retry without file_name
+          const { data: retryData, error: retryErr } = await supabase
+            .from('documents')
+            .insert(basePayload)
+            .select()
+            .single();
+
+          if (retryErr) {
+            await supabase.storage.from('documents').remove([filePath]);
+            throw new Error(retryErr.message);
+          }
+          documentData = retryData;
+        } else {
+          await supabase.storage.from('documents').remove([filePath]);
+          throw new Error(dbError.message);
+        }
+      }
+
+      // Ensure file_name present for UI
+      if (documentData && !documentData.file_name) {
+        documentData.file_name = file.name;
       }
 
       // Add to local state
@@ -141,6 +176,35 @@ const useDocumentsStore = create((set, get) => ({
       });
       throw err;
     }
+  },
+
+  // Get filtered documents
+  getFilteredDocuments: () => {
+    const { documents, filters } = get();
+    let filtered = documents;
+
+    // Filter by document type
+    if (filters.documentType && filters.documentType !== 'all') {
+      filtered = filtered.filter(doc => doc.document_type === filters.documentType);
+    }
+
+    // Filter by verification status
+    if (filters.isVerified !== null) {
+      filtered = filtered.filter(doc => doc.is_verified === filters.isVerified);
+    }
+
+    // Filter by search term
+    if (filters.searchTerm) {
+      const searchTerm = filters.searchTerm.toLowerCase();
+      filtered = filtered.filter(doc => {
+        const name = (doc.file_name || doc.metadata?.original_name || (doc.file_path ? doc.file_path.split('/').pop() : '')).toLowerCase();
+        const type = (doc.document_type || '').toLowerCase();
+        const description = (doc.metadata?.description || '').toLowerCase();
+        return name.includes(searchTerm) || type.includes(searchTerm) || description.includes(searchTerm);
+      });
+    }
+
+    return filtered;
   },
 
   // Get document download URL from S3
@@ -353,4 +417,4 @@ const useDocumentsStore = create((set, get) => ({
   }
 }));
 
-export default useDocumentsStore; 
+export default useDocumentsStore;

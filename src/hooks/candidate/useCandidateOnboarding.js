@@ -364,7 +364,7 @@ export const useCandidateOnboarding = () => {
 
       // Prepare job seeker profile data
       const profileData = {
-        id: user.id,
+        profile_id: user.id,
         headline: formData.currentTitle || `${formData.firstName} ${formData.lastName}`,
         summary: generateProfessionalSummary(formData),
         experience_years: experienceYears,

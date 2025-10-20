@@ -24,7 +24,12 @@ export const useAllDocuments = () => {
 
       if (error) throw error;
       
-      const formattedData = data.map(doc => ({ ...doc, ...doc.profile, profile: undefined }));
+      const formattedData = data.map(doc => ({ 
+        ...doc, 
+        ...doc.profile, 
+        profile: undefined,
+        file_name: doc.file_name || doc.metadata?.original_name || (doc.file_path ? doc.file_path.split('/').pop() : '')
+      }));
       setDocuments(formattedData || []);
 
     } catch (err) {
@@ -69,4 +74,4 @@ export const useAllDocuments = () => {
   };
 
   return { documents, loading, error, fetchAllDocuments, updateDocumentVerification };
-}; 
+};

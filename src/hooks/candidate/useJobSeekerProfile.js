@@ -9,7 +9,7 @@ const supabase = createClient(
 
 export const useJobSeekerProfile = (userId) => {
   const defaultProfile = {
-    id: userId,
+    profile_id: userId,
     headline: '',
     summary: '',
     experience_years: null,
@@ -100,7 +100,7 @@ export const useJobSeekerProfile = (userId) => {
         const { data: seekerData, error: seekerError } = await supabase
           .from('job_seeker_profiles')
           .select('*')
-          .eq('id', userId)
+          .eq('profile_id', userId)
           .single();
 
         if (seekerError && seekerError.code !== 'PGRST116') {
@@ -323,7 +323,7 @@ export const useJobSeekerProfile = (userId) => {
     try {
       const { data, error: updateError } = await supabase
         .from('job_seeker_profiles')
-        .upsert({ ...profile, id: userId, updated_at: new Date() })
+        .upsert({ ...profile, profile_id: userId, updated_at: new Date() })
         .select()
         .single();
       
