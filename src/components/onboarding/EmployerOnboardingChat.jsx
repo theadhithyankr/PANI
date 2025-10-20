@@ -3,6 +3,7 @@ import { Bot, Send, ArrowRight, Sparkles, Building2, Users, CheckCircle, AlertCi
 import { useGroqChat } from '../../hooks/common';
 import { useToast } from '../../hooks/common';
 import Button from '../common/Button';
+import MarkdownRenderer from '../common/MarkdownRenderer';
 import iconmark from '../../assets/logos/iconmark.svg';
 import { chatPrompts } from '../../prompts/chatPrompts';
 
@@ -335,16 +336,8 @@ Let's start with the basics - could you tell me about your company? What's the n
       return null; // Don't render JSON-only messages
     }
     
-    return cleanContent.split('\n').map((line, index) => {
-      if (line.startsWith('• ')) {
-        return (
-          <div key={index} className="mb-1 text-gray-700">
-            {line}
-          </div>
-        );
-      }
-      return line ? <div key={index} className="mb-2">{line}</div> : <br key={index} />;
-    });
+    // Use MarkdownRenderer for the cleaned content
+    return <MarkdownRenderer content={cleanContent} />;
   };
 
   const quickStarterPrompts = [

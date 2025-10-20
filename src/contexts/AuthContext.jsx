@@ -257,6 +257,76 @@ export const AuthProvider = ({ children }) => {
                 );
                 return;
               }
+
+              // If profile is missing, create it now using user metadata
+              if (!profile) {
+                const meta = session.user.user_metadata || {};
+                const derivedUserType = meta.initial_user_type || 'job_seeker';
+                const derivedFullName = meta.full_name || session.user.email?.split('@')[0] || 'New User';
+                const companyName = meta.company_name || null;
+
+                // Create basic profile
+                const { error: createProfileError } = await supabase
+                  .from('profiles')
+                  .insert({
+                    id: session.user.id,
+                    user_type: derivedUserType,
+                    full_name: derivedFullName,
+                    email: session.user.email,
+                    // onboarding_complete intentionally omitted to avoid schema mismatch
+                  });
+
+                if (createProfileError) {
+                  console.error('Failed to auto-create profile on SIGNED_IN:', {
+                    message: createProfileError?.message,
+                    details: createProfileError?.details,
+                    hint: createProfileError?.hint,
+                    code: createProfileError?.code,
+                  });
+                  return;
+                }
+
+                // If employer, create company and employer profile
+                if (derivedUserType === 'employer' && companyName) {
+                  const { data: companyData, error: companyError } = await supabase
+                    .from('companies')
+                    .insert({ name: companyName, created_by: session.user.id, is_approved: false })
+                    .select()
+                    .single();
+
+                  if (companyError) {
+                    console.error('Failed to auto-create company on SIGNED_IN:', companyError);
+                  } else {
+                    const { error: employerProfileError } = await supabase
+                      .from('employer_profiles')
+                      .insert({ id: session.user.id, company_id: companyData.id });
+
+                    if (employerProfileError) {
+                      console.error('Failed to auto-create employer profile on SIGNED_IN:', employerProfileError);
+                    }
+                  }
+                }
+
+                // Refetch the profile after creation
+                const { data: newProfile } = await supabase
+                  .from('profiles')
+                  .select('*')
+                  .eq('id', session.user.id)
+                  .maybeSingle();
+
+                if (newProfile) {
+                  const enrichedUser = {
+                    ...newProfile,
+                    email: session.user.email,
+                    is_email_verified: !!session.user.email_confirmed_at,
+                  };
+                  updateUserState(enrichedUser);
+                  setGlobalUser(enrichedUser);
+                  setGlobalProfile(enrichedUser);
+                }
+                return;
+              }
+
               if (profile) {
                 const enrichedUser = {
                   ...profile,
@@ -274,7 +344,6 @@ export const AuthProvider = ({ children }) => {
                   if (empError && empError.code !== 'PGRST116') {
                     console.error('Failed to fetch employer profile in auth state change:', empError);
                   } else if (employerProfile) {
-                    // Combine user and employer profile data
                     const combinedProfile = {
                       ...enrichedUser,
                       ...employerProfile
@@ -317,6 +386,11 @@ export const AuthProvider = ({ children }) => {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/email-verified`,
+          data: {
+            initial_user_type: type === 'candidate' ? 'job_seeker' : 'employer',
+            full_name: name,
+            company_name: type === 'employer' ? company : null,
+          },
         },
       });
 
@@ -331,51 +405,69 @@ export const AuthProvider = ({ children }) => {
         throw new Error("An unexpected error occurred during signup.");
       }
 
-      // 2. Insert into profiles
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: userId,
-        user_type: type === 'candidate' ? 'job_seeker' : 'employer',
-        full_name: name,
-        onboarding_complete: false,
-      });
+      const hasSession = !!signUpData?.session;
 
-      if (profileError) {
-        console.error("Error creating user profile:", profileError);
-        // Should we delete the user from auth if profile creation fails?
-        // This would be a good place for a transaction if Supabase supported it easily across services.
-        throw new Error("Failed to create your user profile.");
-      }
+      // 2. Insert into profiles only if we already have a session (email confirmations disabled)
+      if (hasSession) {
+        const { error: profileError } = await supabase.from('profiles').insert({
+          id: userId,
+          user_type: type === 'candidate' ? 'job_seeker' : 'employer',
+          full_name: name,
+          // onboarding_complete intentionally omitted to avoid schema mismatch
+        });
 
-      // 3. If employer, create company and employer profile
-      if (type === 'employer') {
-        // Create company
-        const { data: companyData, error: companyError } = await supabase
-          .from('companies')
-          .insert({ name: company, created_by: userId, is_approved: false })
-          .select()
-          .single();
-
-        if (companyError) {
-          console.error("Error creating company:", companyError);
-          throw new Error("Failed to create your company profile.");
+        if (profileError) {
+          console.error("Error creating user profile:", {
+            message: profileError?.message,
+            details: profileError?.details,
+            hint: profileError?.hint,
+            code: profileError?.code,
+          });
+          throw new Error("Failed to create your user profile.");
         }
 
-        // Create employer profile
-        const { error: employerProfileError } = await supabase
-          .from('employer_profiles')
-          .insert({ id: userId, company_id: companyData.id });
+        // 3. If employer and session exists, create company and employer profile immediately
+        if (type === 'employer') {
+          const { data: companyData, error: companyError } = await supabase
+            .from('companies')
+            .insert({ name: company, created_by: userId, is_approved: false })
+            .select()
+            .single();
 
-        if (employerProfileError) {
-          console.error("Error creating employer profile:", employerProfileError);
-          throw new Error("Failed to create your employer profile.");
+          if (companyError) {
+            console.error("Error creating company:", {
+              message: companyError?.message,
+              details: companyError?.details,
+              hint: companyError?.hint,
+              code: companyError?.code,
+            });
+            throw new Error("Failed to create your company profile.");
+          }
+
+          const { error: employerProfileError } = await supabase
+            .from('employer_profiles')
+            .insert({ id: userId, company_id: companyData.id });
+
+          if (employerProfileError) {
+            console.error("Error creating employer profile:", {
+              message: employerProfileError?.message,
+              details: employerProfileError?.details,
+              hint: employerProfileError?.hint,
+              code: employerProfileError?.code,
+            });
+            throw new Error("Failed to create your employer profile.");
+          }
         }
+      } else {
+        // No session yet (likely email confirmation is enabled). We defer profile creation
+        // until the user verifies email and signs in (handled in onAuthStateChange).
+        console.log('Signup complete without session; deferring profile creation until SIGNED_IN.');
       }
 
       return signUpData;
 
     } catch (error) {
       console.error('Signup process failed:', error);
-      // Ensure we pass a clean error message to the UI
       if (error instanceof Error) {
         throw error;
       }

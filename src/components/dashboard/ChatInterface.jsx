@@ -5,6 +5,7 @@ import { Send, Paperclip, FileText, Image, File, X, Bot, User, Briefcase, Users,
 import { useAuth, useGroqChat } from '../../hooks/common';
 import Button from '../common/Button';
 import Header from '../common/Header';
+import MarkdownRenderer from '../common/MarkdownRenderer';
 import useChatStore from '../../store/useChatStore';
 import logo from '../../assets/logos/logo.svg';
 import iconmark from '../../assets/logos/iconmark.svg';
@@ -624,25 +625,8 @@ const ChatInterface = ({ currentChatTitle = null, showHeader = true }) => {
   }, [messages, currentChatInfo, updateChatTitle]);
 
   const formatMessage = (content) => {
-    return content.split('\n').map((line, index) => {
-      if (line.startsWith('• **') && line.includes('**:')) {
-        const [title, description] = line.split('**:');
-        return (
-          <div key={index} className="mb-2">
-            <span className="font-semibold text-gray-900">{title.replace('• **', '• ')}</span>
-            <span className="text-gray-700">: {description}</span>
-          </div>
-        );
-      }
-      if (line.startsWith('• ')) {
-        return (
-          <div key={index} className="mb-1 text-gray-700">
-            {line}
-          </div>
-        );
-      }
-      return line ? <div key={index} className="mb-2">{line}</div> : <br key={index} />;
-    });
+    // Use MarkdownRenderer for AI messages
+    return <MarkdownRenderer content={content} />;
   };
 
   // Initial State: Centered chatbox only

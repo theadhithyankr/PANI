@@ -1,0 +1,303 @@
+CREATE TABLE public.ai_conversations (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL,
+  conversation_type text NOT NULL CHECK (conversation_type = ANY (ARRAY['resume_review'::text, 'interview_prep'::text, 'job_matching'::text, 'career_advice'::text])),
+  messages jsonb NOT NULL DEFAULT '[]'::jsonb,
+  metadata jsonb DEFAULT '{}'::jsonb,
+  status text NOT NULL DEFAULT 'active'::text CHECK (status = ANY (ARRAY['active'::text, 'completed'::text, 'archived'::text])),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT ai_conversations_pkey PRIMARY KEY (id),
+  CONSTRAINT ai_conversations_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.application_events (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  application_id uuid NOT NULL,
+  event_type text NOT NULL CHECK (event_type = ANY (ARRAY['applied'::text, 'viewed'::text, 'screening'::text, 'interview_scheduled'::text, 'interview_completed'::text, 'offered'::text, 'hired'::text, 'rejected'::text, 'withdrawn'::text, 'invited'::text, 'accepted'::text])),
+  event_data jsonb DEFAULT '{}'::jsonb,
+  created_by uuid,
+  notes text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT application_events_pkey PRIMARY KEY (id),
+  CONSTRAINT application_events_application_id_fkey FOREIGN KEY (application_id) REFERENCES public.job_applications_v2(id),
+  CONSTRAINT application_events_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.companies (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  name text NOT NULL,
+  description text,
+  industry text,
+  size text CHECK (size = ANY (ARRAY['startup'::text, 'small'::text, 'medium'::text, 'large'::text, 'enterprise'::text])),
+  website text,
+  logo_url text,
+  location text,
+  founded_year integer,
+  is_verified boolean NOT NULL DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT companies_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.company_photos (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  company_id uuid NOT NULL,
+  photo_url text NOT NULL,
+  caption text,
+  is_primary boolean NOT NULL DEFAULT false,
+  display_order integer DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT company_photos_pkey PRIMARY KEY (id),
+  CONSTRAINT company_photos_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.companies(id)
+);
+CREATE TABLE public.conversation_participants (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  conversation_id uuid NOT NULL,
+  user_id uuid NOT NULL,
+  joined_at timestamp with time zone DEFAULT now(),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT conversation_participants_pkey PRIMARY KEY (id),
+  CONSTRAINT conversation_participants_conversation_id_fkey FOREIGN KEY (conversation_id) REFERENCES public.conversations_v2(id),
+  CONSTRAINT conversation_participants_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.conversations_v2 (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  application_id uuid NOT NULL,
+  title text,
+  last_message_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT conversations_v2_pkey PRIMARY KEY (id),
+  CONSTRAINT conversations_v2_application_id_fkey FOREIGN KEY (application_id) REFERENCES public.job_applications_v2(id)
+);
+CREATE TABLE public.documents (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL,
+  filename text NOT NULL,
+  file_url text NOT NULL,
+  file_type text NOT NULL,
+  file_size integer,
+  document_type text CHECK (document_type = ANY (ARRAY['resume'::text, 'cover_letter'::text, 'portfolio'::text, 'certificate'::text, 'other'::text])),
+  is_public boolean NOT NULL DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT documents_pkey PRIMARY KEY (id),
+  CONSTRAINT documents_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.employer_profiles (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  profile_id uuid NOT NULL UNIQUE,
+  company_id uuid,
+  position text,
+  department text,
+  bio text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT employer_profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT employer_profiles_profile_id_fkey FOREIGN KEY (profile_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.interview_invitations (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  job_id uuid NOT NULL,
+  candidate_id uuid NOT NULL,
+  employer_id uuid NOT NULL,
+  interview_type text NOT NULL DEFAULT '1st_interview'::text CHECK (interview_type = ANY (ARRAY['1st_interview'::text, 'technical'::text, 'hr_interview'::text, 'final'::text, 'phone_screen'::text])),
+  interview_format text NOT NULL DEFAULT 'video'::text CHECK (interview_format = ANY (ARRAY['in_person'::text, 'video'::text, 'phone'::text])),
+  proposed_date timestamp with time zone,
+  duration_minutes integer NOT NULL DEFAULT 60,
+  location text,
+  message text,
+  status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'accepted'::text, 'declined'::text, 'expired'::text])),
+  expires_at timestamp with time zone DEFAULT (now() + '7 days'::interval),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT interview_invitations_pkey PRIMARY KEY (id),
+  CONSTRAINT interview_invitations_job_id_fkey FOREIGN KEY (job_id) REFERENCES public.jobs(id),
+  CONSTRAINT interview_invitations_candidate_id_fkey FOREIGN KEY (candidate_id) REFERENCES public.profiles(id),
+  CONSTRAINT interview_invitations_employer_id_fkey FOREIGN KEY (employer_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.interviews_v2 (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  job_id uuid NOT NULL,
+  application_id uuid,
+  invitation_id uuid,
+  seeker_id uuid,
+  interviewer_id uuid NOT NULL,
+  interview_type text NOT NULL DEFAULT '1st_interview'::text CHECK (interview_type = ANY (ARRAY['1st_interview'::text, 'technical'::text, 'hr_interview'::text, 'final'::text, 'phone_screen'::text])),
+  interview_format text NOT NULL DEFAULT 'video'::text CHECK (interview_format = ANY (ARRAY['in_person'::text, 'video'::text, 'phone'::text])),
+  scheduled_at timestamp with time zone NOT NULL,
+  duration_minutes integer NOT NULL DEFAULT 60,
+  location text,
+  meeting_link text,
+  status text NOT NULL DEFAULT 'scheduled'::text CHECK (status = ANY (ARRAY['scheduled'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text, 'no_show'::text])),
+  feedback text,
+  rating integer CHECK (rating >= 1 AND rating <= 5),
+  notes text,
+  application_status text CHECK (application_status = ANY (ARRAY['pending'::text, 'shortlisted'::text, 'rejected'::text, 'hired'::text])),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT interviews_v2_pkey PRIMARY KEY (id),
+  CONSTRAINT interviews_v2_job_id_fkey FOREIGN KEY (job_id) REFERENCES public.jobs(id),
+  CONSTRAINT interviews_v2_application_id_fkey FOREIGN KEY (application_id) REFERENCES public.job_applications_v2(id),
+  CONSTRAINT interviews_v2_invitation_id_fkey FOREIGN KEY (invitation_id) REFERENCES public.interview_invitations(id),
+  CONSTRAINT interviews_v2_seeker_id_fkey FOREIGN KEY (seeker_id) REFERENCES public.profiles(id),
+  CONSTRAINT interviews_v2_interviewer_id_fkey FOREIGN KEY (interviewer_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.job_applications_v2 (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  job_id uuid NOT NULL,
+  applicant_id uuid NOT NULL,
+  status text NOT NULL DEFAULT 'applied'::text CHECK (status = ANY (ARRAY['applied'::text, 'screening'::text, 'interviewing'::text, 'offered'::text, 'hired'::text, 'rejected'::text, 'withdrawn'::text, 'invited'::text, 'accepted'::text])),
+  cover_letter text,
+  resume_url text,
+  application_date timestamp with time zone DEFAULT now(),
+  response text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT job_applications_v2_pkey PRIMARY KEY (id),
+  CONSTRAINT job_applications_v2_job_id_fkey FOREIGN KEY (job_id) REFERENCES public.jobs(id),
+  CONSTRAINT job_applications_v2_applicant_id_fkey FOREIGN KEY (applicant_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.job_offers (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  application_id uuid NOT NULL,
+  salary_offered integer,
+  salary_currency text DEFAULT 'USD'::text,
+  start_date date,
+  benefits text,
+  terms text,
+  status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'accepted'::text, 'declined'::text, 'expired'::text])),
+  expires_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT job_offers_pkey PRIMARY KEY (id),
+  CONSTRAINT job_offers_application_id_fkey FOREIGN KEY (application_id) REFERENCES public.job_applications_v2(id)
+);
+CREATE TABLE public.job_seeker_profiles (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  profile_id uuid NOT NULL UNIQUE,
+  bio text,
+  skills ARRAY,
+  experience_level text CHECK (experience_level = ANY (ARRAY['entry'::text, 'mid'::text, 'senior'::text, 'lead'::text, 'executive'::text])),
+  preferred_salary_min integer,
+  preferred_salary_max integer,
+  preferred_locations ARRAY,
+  availability text CHECK (availability = ANY (ARRAY['immediate'::text, 'two_weeks'::text, 'one_month'::text, 'negotiable'::text])),
+  resume_url text,
+  portfolio_url text,
+  linkedin_url text,
+  github_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT job_seeker_profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT job_seeker_profiles_profile_id_fkey FOREIGN KEY (profile_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.jobs (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  company_id uuid NOT NULL,
+  posted_by uuid NOT NULL,
+  title text NOT NULL,
+  description text NOT NULL,
+  requirements text,
+  benefits text,
+  salary_min integer,
+  salary_max integer,
+  salary_currency text DEFAULT 'USD'::text,
+  employment_type text NOT NULL DEFAULT 'full_time'::text CHECK (employment_type = ANY (ARRAY['full_time'::text, 'part_time'::text, 'contract'::text, 'internship'::text, 'freelance'::text])),
+  experience_level text CHECK (experience_level = ANY (ARRAY['entry'::text, 'mid'::text, 'senior'::text, 'lead'::text, 'executive'::text])),
+  location text,
+  remote_policy text DEFAULT 'office'::text CHECK (remote_policy = ANY (ARRAY['office'::text, 'remote'::text, 'hybrid'::text])),
+  skills_required ARRAY,
+  application_deadline timestamp with time zone,
+  status text NOT NULL DEFAULT 'draft'::text CHECK (status = ANY (ARRAY['draft'::text, 'active'::text, 'paused'::text, 'closed'::text, 'expired'::text])),
+  is_featured boolean NOT NULL DEFAULT false,
+  view_count integer NOT NULL DEFAULT 0,
+  application_count integer NOT NULL DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT jobs_pkey PRIMARY KEY (id),
+  CONSTRAINT jobs_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.companies(id),
+  CONSTRAINT jobs_posted_by_fkey FOREIGN KEY (posted_by) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.messages_v3 (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  conversation_id uuid NOT NULL UNIQUE,
+  messages jsonb NOT NULL DEFAULT '[]'::jsonb,
+  last_message_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT messages_v3_pkey PRIMARY KEY (id),
+  CONSTRAINT messages_v3_conversation_id_fkey FOREIGN KEY (conversation_id) REFERENCES public.conversations_v2(id)
+);
+CREATE TABLE public.profiles (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  email text NOT NULL UNIQUE,
+  full_name text NOT NULL,
+  avatar_url text,
+  phone text,
+  location text,
+  user_type text NOT NULL DEFAULT 'job_seeker'::text CHECK (user_type = ANY (ARRAY['job_seeker'::text, 'employer'::text, 'admin'::text])),
+  is_active boolean NOT NULL DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT profiles_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.resume_data (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL UNIQUE,
+  document_id uuid,
+  parsed_data jsonb DEFAULT '{}'::jsonb,
+  skills ARRAY,
+  experience_years integer,
+  education_level text,
+  certifications ARRAY,
+  languages ARRAY,
+  last_parsed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT resume_data_pkey PRIMARY KEY (id),
+  CONSTRAINT resume_data_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id),
+  CONSTRAINT resume_data_document_id_fkey FOREIGN KEY (document_id) REFERENCES public.documents(id)
+);
+CREATE TABLE public.support_tiers (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  name text NOT NULL,
+  description text,
+  price_monthly numeric,
+  price_yearly numeric,
+  features jsonb DEFAULT '[]'::jsonb,
+  max_job_posts integer,
+  max_applications integer,
+  is_active boolean NOT NULL DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT support_tiers_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.team_members (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  company_id uuid NOT NULL,
+  profile_id uuid NOT NULL,
+  role text NOT NULL DEFAULT 'member'::text CHECK (role = ANY (ARRAY['owner'::text, 'admin'::text, 'hr'::text, 'manager'::text, 'member'::text])),
+  permissions ARRAY DEFAULT ARRAY['view_jobs'::text],
+  joined_at timestamp with time zone DEFAULT now(),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT team_members_pkey PRIMARY KEY (id),
+  CONSTRAINT team_members_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.companies(id),
+  CONSTRAINT team_members_profile_id_fkey FOREIGN KEY (profile_id) REFERENCES public.profiles(id)
+);
+CREATE TABLE public.transactions (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  user_id uuid NOT NULL,
+  amount numeric NOT NULL,
+  currency text NOT NULL DEFAULT 'USD'::text,
+  transaction_type text NOT NULL CHECK (transaction_type = ANY (ARRAY['subscription'::text, 'job_post'::text, 'premium_feature'::text])),
+  status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'completed'::text, 'failed'::text, 'refunded'::text])),
+  payment_method text,
+  payment_reference text,
+  metadata jsonb DEFAULT '{}'::jsonb,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT transactions_pkey PRIMARY KEY (id),
+  CONSTRAINT transactions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id)
+);

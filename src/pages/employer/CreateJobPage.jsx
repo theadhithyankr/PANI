@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Bot, Send, CheckCircle, AlertCircle, ArrowUpCircle, ArrowDownCircle, Circle, Loader, Sparkles } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../../components/common/Button';
+import MarkdownRenderer from '../../components/common/MarkdownRenderer';
 // import SupportTierCard from '../../components/employer/SupportTierCard'; // Disabled support tiers
 import Confetti from '../../components/common/Confetti';
 import { useJobCreationAI } from '../../hooks/employer';
@@ -36,41 +37,8 @@ const StreamingDots = () => {
 const formatMessage = (content) => {
   if (!content) return null;
   
-  return content.split('\n').map((line, index) => {
-    // Handle bullet points with bold headers
-    if (line.startsWith('• **') && line.includes('**:')) {
-      const [title, description] = line.split('**:');
-      return (
-        <div key={index} className="mb-2">
-          <span className="font-semibold text-gray-900">{title.replace('• **', '• ')}</span>
-          <span className="text-gray-700">: {description}</span>
-        </div>
-      );
-    }
-    // Handle regular bullet points
-    if (line.startsWith('• ')) {
-      return (
-        <div key={index} className="mb-1 text-gray-700">
-          {line}
-        </div>
-      );
-    }
-    // Handle bold text
-    if (line.includes('**')) {
-      const parts = line.split('**');
-      return (
-        <div key={index} className="mb-2">
-          {parts.map((part, partIndex) => 
-            partIndex % 2 === 1 ? 
-              <strong key={partIndex} className="font-semibold">{part}</strong> : 
-              <span key={partIndex}>{part}</span>
-          )}
-        </div>
-      );
-    }
-    // Regular lines
-    return line ? <div key={index} className="mb-2">{line}</div> : <br key={index} />;
-  });
+  // Use MarkdownRenderer for AI messages
+  return <MarkdownRenderer content={content} />;
 };
 
 const FIELD_LABELS = {

@@ -48,7 +48,7 @@ async function checkTables() {
     'employer_profiles',
     'companies',
     'jobs',
-    'job_applications'
+    'job_applications_v2'
   ];
   
   const results = {};
